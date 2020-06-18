@@ -5,7 +5,8 @@ from .models import JobPost
 from .models import JobOffer
 from .models import JobApplied
 from .models import ShortListed
-
+from .models import EmployerDetailsFav
+from .models import EmployeeDetailsFav
 
 from rest_framework import serializers
 
@@ -149,3 +150,27 @@ class ShortListedSerializers(serializers.ModelSerializer):
         'job_active',
         'confirmed',
         )
+
+class EmployerDetailsFavSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = EmployerDetailsFav
+        fields = (
+        'id',
+        'eyer_id',
+        'eyer_name',
+        'eyee_id',
+        'eyee_name',
+        )
+
+class EmployeeDetailsFavSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeDetailsFav
+        fields = (
+        'id',
+        'eyee_id',
+        'eyee_name',
+        'job_id',
+        'job_post',
+        )
+
+

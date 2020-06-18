@@ -7,6 +7,8 @@ from .models import JobPost
 from .models import JobOffer
 from .models import JobApplied
 from .models import ShortListed
+from .models import EmployerDetailsFav
+from .models import EmployeeDetailsFav
 from .serializer import UserLoginSerializers
 from .serializer import EmployerDetailsSerializers
 from .serializer import EmployeeDetailsSerializers
@@ -14,6 +16,8 @@ from .serializer import JobPostSerializers
 from .serializer import JobOfferSerializers
 from .serializer import JobAppliedSerializers
 from .serializer import ShortListedSerializers
+from .serializer import EmployerDetailsFavSerializers
+from .serializer import EmployeeDetailsFavSerializers
 from rest_framework import filters
 import django_filters.rest_framework
 # Create your views here.
@@ -63,4 +67,14 @@ class ShortListedViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.OrderingFilter,)
     filter_fields = ('job_id','confirmed', 'job_active')   
 
+class EmployerDetailsFavViewSet(viewsets.ModelViewSet):
+    queryset = EmployerDetailsFav.objects.all()
+    serializer_class = EmployerDetailsFavSerializers
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.OrderingFilter,)
+    filter_fields = ('eyer_id','eyee_id')   
 
+class EmployeeDetailsFavViewSet(viewsets.ModelViewSet):
+    queryset = EmployeeDetailsFav.objects.all()
+    serializer_class = EmployeeDetailsFavSerializers
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.OrderingFilter,)
+    filter_fields = ('eyee_id','job_id')   

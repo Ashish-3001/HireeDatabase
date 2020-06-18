@@ -110,3 +110,15 @@ class ShortListed(models.Model):
     short_list_type_id = models.CharField(max_length=20)
     job_active = models.BooleanField(default=True)
     confirmed = models.BooleanField(default=False)     
+
+class EmployerDetailsFav(models.Model):
+    eyer_id = models.ForeignKey(EmployerDetails,  on_delete=models.DO_NOTHING)
+    eyer_name = models.CharField(max_length=50)
+    eyee_id = models.ForeignKey(EmployeeDetails,  on_delete=models.DO_NOTHING)
+    eyee_name = models.CharField(max_length=50)
+
+class EmployeeDetailsFav(models.Model):
+    eyee_id = models.ForeignKey(EmployeeDetails,  on_delete=models.DO_NOTHING)
+    eyee_name = models.CharField(max_length=50)
+    job_id = models.ForeignKey(JobPost,  on_delete=models.DO_NOTHING)
+    job_post = models.CharField(max_length=50)

@@ -29,6 +29,8 @@ router.register(r'JobPost', views.JobPostViewSet)
 router.register(r'JobOffer', views.JobOfferViewSet)
 router.register(r'JobApplied', views.JobAppliedViewSet)
 router.register(r'ShortListed', views.ShortListedViewSet)
+router.register(r'EmployerDetailsFav', views.EmployerDetailsFavViewSet)
+router.register(r'EmployeeDetailsFav', views.EmployeeDetailsFavViewSet)
 
 urlpatterns = [
     url(r'^',include(router.urls)),
