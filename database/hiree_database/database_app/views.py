@@ -71,10 +71,10 @@ class EmployerDetailsFavViewSet(viewsets.ModelViewSet):
     queryset = EmployerDetailsFav.objects.all()
     serializer_class = EmployerDetailsFavSerializers
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.OrderingFilter,)
-    filter_fields = ('eyer_id','eyee_id')   
+    filter_fields = ('eyer_id','unliked')   
 
 class EmployeeDetailsFavViewSet(viewsets.ModelViewSet):
     queryset = EmployeeDetailsFav.objects.all()
     serializer_class = EmployeeDetailsFavSerializers
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.OrderingFilter,)
-    filter_fields = ('eyee_id','job_id')   
+    filter_fields = ('eyee_id','unliked')   

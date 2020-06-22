@@ -73,9 +73,9 @@ class EmployeeDetailsSerializers(serializers.ModelSerializer):
         'eyee_add_skills',
         'eyee_salary_expected',
         'eyee_no_appiled',
+        'eyee_no_offered',
         'eyee_no_accept',
-        'eyee_no_rejected',
-        'eyee_no_post_liked')
+        'eyee_no_shortlisted')
 
 
 class JobPostSerializers(serializers.ModelSerializer):
@@ -160,6 +160,7 @@ class EmployerDetailsFavSerializers(serializers.ModelSerializer):
         'eyer_name',
         'eyee_id',
         'eyee_name',
+        'unliked',
         )
 
 class EmployeeDetailsFavSerializers(serializers.ModelSerializer):
@@ -171,6 +172,6 @@ class EmployeeDetailsFavSerializers(serializers.ModelSerializer):
         'eyee_name',
         'job_id',
         'job_post',
-        )
+        'unliked')
 
 

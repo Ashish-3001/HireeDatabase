@@ -52,9 +52,9 @@ class EmployeeDetails(models.Model):
     eyee_add_skills = models.CharField(max_length=300)
     eyee_salary_expected = models.CharField(max_length=20)
     eyee_no_appiled = models.IntegerField(default=0)
+    eyee_no_offered = models.IntegerField(default=0)
     eyee_no_accept = models.IntegerField(default=0)
-    eyee_no_rejected = models.IntegerField(default=0)
-    eyee_no_post_liked = models.IntegerField(default=0)
+    eyee_no_shortlisted = models.IntegerField(default=0)
 
 class JobPost(models.Model):
     eyer_id = models.ForeignKey(EmployerDetails, related_name='eyer_id',  on_delete=models.DO_NOTHING)
@@ -116,9 +116,11 @@ class EmployerDetailsFav(models.Model):
     eyer_name = models.CharField(max_length=50)
     eyee_id = models.ForeignKey(EmployeeDetails,  on_delete=models.DO_NOTHING)
     eyee_name = models.CharField(max_length=50)
+    unliked = models.BooleanField(default=False)
 
 class EmployeeDetailsFav(models.Model):
     eyee_id = models.ForeignKey(EmployeeDetails,  on_delete=models.DO_NOTHING)
     eyee_name = models.CharField(max_length=50)
     job_id = models.ForeignKey(JobPost,  on_delete=models.DO_NOTHING)
     job_post = models.CharField(max_length=50)
+    unliked = models.BooleanField(default=False)
