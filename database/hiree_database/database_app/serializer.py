@@ -118,6 +118,7 @@ class JobOfferSerializers(serializers.ModelSerializer):
         'eyee_id',
         'eyee_name',
         'job_active',
+        'short_listed',
         'offer_letter')
 
 class JobAppliedSerializers(serializers.ModelSerializer):

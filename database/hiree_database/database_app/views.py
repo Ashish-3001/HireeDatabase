@@ -52,20 +52,20 @@ class JobOfferViewSet(viewsets.ModelViewSet):
     queryset = JobOffer.objects.all()
     serializer_class = JobOfferSerializers
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.OrderingFilter,)
-    filter_fields = ('job_id', 'job_active', )
+    filter_fields = ('job_id','eyee_id','job_active', 'short_listed' )
 
 
 class JobAppliedViewSet(viewsets.ModelViewSet):
     queryset = JobApplied.objects.all()
     serializer_class = JobAppliedSerializers
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.OrderingFilter,)
-    filter_fields = ('job_id', 'job_active', 'short_listed')   
+    filter_fields = ('job_id','eyee_id', 'job_active', 'short_listed')   
 
 class ShortListedViewSet(viewsets.ModelViewSet):
     queryset = ShortListed.objects.all()
     serializer_class = ShortListedSerializers
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.OrderingFilter,)
-    filter_fields = ('job_id','confirmed', 'job_active')   
+    filter_fields = ('job_id','eyee_id','confirmed', 'job_active')   
 
 class EmployerDetailsFavViewSet(viewsets.ModelViewSet):
     queryset = EmployerDetailsFav.objects.all()

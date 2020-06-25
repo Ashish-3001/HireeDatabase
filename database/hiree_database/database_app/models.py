@@ -88,6 +88,7 @@ class JobOffer(models.Model):
     eyee_id = models.ForeignKey(EmployeeDetails,  on_delete=models.DO_NOTHING)
     eyee_name = models.CharField(max_length=50)
     job_active = models.BooleanField(default=True)
+    short_listed = models.BooleanField(default=False)
     offer_letter = models.CharField(max_length=1000)
 
 class JobApplied(models.Model):
