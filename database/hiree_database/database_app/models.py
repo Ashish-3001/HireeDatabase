@@ -56,6 +56,8 @@ class EmployeeDetails(models.Model):
     eyee_no_accept = models.IntegerField(default=0)
     eyee_no_shortlisted = models.IntegerField(default=0)
 
+
+
 class JobPost(models.Model):
     eyer_id = models.ForeignKey(EmployerDetails, related_name='eyer_id',  on_delete=models.DO_NOTHING)
     eyer_name = models.CharField(max_length=50)
@@ -125,3 +127,8 @@ class EmployeeDetailsFav(models.Model):
     job_id = models.ForeignKey(JobPost,  on_delete=models.DO_NOTHING)
     job_post = models.CharField(max_length=50)
     unliked = models.BooleanField(default=False)
+
+class LoginData(models.Model):
+    phone = models.CharField(max_length=10)
+    data_time = models.DateTimeField(auto_now=True)
+    otp = models.CharField(max_length=4, default='0000')

@@ -18,6 +18,7 @@ from django.urls import path
 from django.conf.urls import include, url
 from rest_framework import routers
 from database_app import views
+from rest_framework.authtoken.views import obtain_auth_token
 
 
 router = routers.DefaultRouter()
@@ -34,5 +35,7 @@ router.register(r'EmployeeDetailsFav', views.EmployeeDetailsFavViewSet)
 
 urlpatterns = [
     url(r'^',include(router.urls)),
+    path('validate-otp/', views.ValidatePhoneSendOTP.as_view()),
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('admin/', admin.site.urls),
 ]

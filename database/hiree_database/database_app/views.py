@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 from .models import UserLogin
 from .models import EmployerDetails
 from .models import EmployeeDetails
@@ -9,6 +11,7 @@ from .models import JobApplied
 from .models import ShortListed
 from .models import EmployerDetailsFav
 from .models import EmployeeDetailsFav
+from .models import LoginData
 from .serializer import UserLoginSerializers
 from .serializer import EmployerDetailsSerializers
 from .serializer import EmployeeDetailsSerializers
@@ -18,11 +21,122 @@ from .serializer import JobAppliedSerializers
 from .serializer import ShortListedSerializers
 from .serializer import EmployerDetailsFavSerializers
 from .serializer import EmployeeDetailsFavSerializers
+from .serializer import LoginDataSerializers
 from rest_framework import filters
 from rest_framework import generics
+from rest_framework import status
+from rest_framework.response import Response
 from django_filters import rest_framework as FilterSet
 import django_filters.rest_framework
+from rest_framework.views import APIView
+from datetime import datetime
+import requests
+import random
 # Create your views here.
+
+class UserAuthentication(ObtainAuthToken):
+    def post(self, request,):
+        serializer = self.serializer_class(data=request.data, context=(request)) 
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token.created = Token.objects.get_or_create(user=user)
+        return Response(token.key)
+
+class ValidatePhoneSendOTP(APIView):
+    queryset = LoginData.objects.all()
+    serializer_class = LoginDataSerializers
+    def post(self, request, *args, **kwargs):
+        serializer = LoginDataSerializers(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        phone_number = serializer.validated_data['phone']
+        print(phone_number)
+        if phone_number:
+            phone = str(phone_number)
+            user = UserLogin.objects.filter(user_phone_no__iexact = phone)
+            if user.exists():
+                key = sendotp(phone)
+                if key:
+                    data = LoginData.objects.filter(phone__iexact = phone)
+                    if data.exists():
+                        otp = str(key)
+                        url = 'http://2factor.in/API/V1/99e679bc-cb75-11ea-9fa5-0200cd936042/SMS/'+phone+'/'+otp+'/EZEEJOBS'
+                        r = requests.get(url)
+                        if r.status_code == 200:
+                            data = data.first()
+                            data.data_time = datetime.now()
+                            data.otp = key
+                            data.save()
+                            return Response({
+                                'status': True,
+                                'detail': 'phone number is present in both',
+                                'otp': key,
+                                'time': 'exists'
+                            })
+                        else :
+                            return Response({
+                                'status': True,
+                                'detail': 'error in sending otp'
+                            })
+                    else:
+                        otp = str(key)
+                        url = 'http://2factor.in/API/V1/99e679bc-cb75-11ea-9fa5-0200cd936042/SMS/'+phone+'/'+otp+'/EZEEJOBS'
+                        r = requests.get(url)
+                        if r.status_code == 200:
+                            serializer.save()
+                            data = LoginData.objects.filter(phone__iexact = phone)
+                            data = data.first()
+                            data.data_time = datetime.now()
+                            data.otp = key
+                            data.save()
+                            return Response({
+                                'status': True,
+                                'detail': 'phone number is present',
+                                'otp': key
+                            })
+                        else:
+                            return Response({
+                                'status': True,
+                                'detail': 'error in sending otp'
+                            })
+                else:
+                    return Response({
+                    'status': False,
+                    'detail': 'Genrating otp error'
+                })
+            else :
+                key = sendotp(phone)
+                if key:
+                    otp = str(key)
+                    url = 'http://2factor.in/API/V1/99e679bc-cb75-11ea-9fa5-0200cd936042/SMS/'+phone+'/'+otp+'/EZEEJOBS'
+                    r = requests.get(url)
+                    if r.status_code == 200:
+                        serializer.save()
+                        data = LoginData.objects.filter(phone__iexact = phone)
+                        data = data.first()
+                        data.data_time = datetime.now()
+                        data.otp = key
+                        data.save()
+                        return Response({
+                        'status': True,
+                        'detail': 'phone number added',
+                        'otp': key
+                    })
+                    else:
+                        return Response({
+                            'status': True,
+                            'detail': 'error in sending otp'
+                        })
+                else:
+                    return Response({
+                    'status': False,
+                    'detail': 'Genrating otp error'
+                })
+        else:
+            return Response({
+                    'status': False,
+                    'detail': 'phone number not given in the post request'
+                })
+
 
 class JobPostFilterSet(django_filters.FilterSet):
     negated_job_salary = django_filters.Filter('job_salary', exclude=True)
@@ -51,13 +165,13 @@ class EmployeeDetailsFilterSet(django_filters.FilterSet):
 
 
 class UserLoginViewSet(viewsets.ModelViewSet):
-
+    
     queryset = UserLogin.objects.all().order_by('user_login_data_time')
     serializer_class = UserLoginSerializers
     
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.OrderingFilter,)
     filter_fields = ('user_phone_no',)
-    
+
 class EmployerDetailsViewSet(viewsets.ModelViewSet):
     queryset = EmployerDetails.objects.all()
     serializer_class = EmployerDetailsSerializers
@@ -71,6 +185,8 @@ class EmployeeDetailsViewSet(viewsets.ModelViewSet):
     filter_fields = ('user_id','eyee_choice','eyee_salary_expected','eyee_pre_experience','eyee_education','eyee_city','eyee_type_hotel','eyee_age','eyee_gender',)
     ordering_fields = '__all__'
     filter_class = EmployeeDetailsFilterSet
+    
+
 
 class JobPostViewSet(viewsets.ModelViewSet):
     queryset = JobPost.objects.all()
@@ -85,7 +201,7 @@ class JobOfferViewSet(viewsets.ModelViewSet):
     queryset = JobOffer.objects.all()
     serializer_class = JobOfferSerializers
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.OrderingFilter,)
-    filter_fields = ('job_id','eyee_id','job_active', 'short_listed' )
+    filter_fields = ('job_id','eyee_id','job_active', 'short_listed','eyer_id' )
 
 
 class JobAppliedViewSet(viewsets.ModelViewSet):
@@ -111,3 +227,11 @@ class EmployeeDetailsFavViewSet(viewsets.ModelViewSet):
     serializer_class = EmployeeDetailsFavSerializers
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.OrderingFilter,)
     filter_fields = ('eyee_id','unliked')   
+
+def sendotp(phone):
+    if phone:
+        key = random.randint(999, 9999)
+        return key
+    else: 
+        return False
+
